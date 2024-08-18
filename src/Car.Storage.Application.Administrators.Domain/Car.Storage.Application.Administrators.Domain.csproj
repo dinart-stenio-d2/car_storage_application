@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Events\" />
+    <Folder Include="FluentValidators\" />
+    <Folder Include="Interfaces\Repositories\" />
+    <Folder Include="ServicesDomain\Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Car.Storage.Application.SharedKernel\Car.Storage.Application.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>
