@@ -1,14 +1,21 @@
+using Car.Storage.Application.Administrators.IoC;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+AddDependencyInjectionServices.AddConfigurationFiles(builder.Configuration, builder.Environment);
+AddDependencyInjectionServices.AddConfigurationsVariables(builder.Services, builder.Configuration);
+AddDependencyInjectionServices.AddGeneralMidllewares(builder.Services);
+//AddDependencyInjectionServices.AddAutoMapperMappings(builder.Services);
+//AddDependencyInjectionServices.AddApiConfig(builder.Services);
+//AddDependencyInjectionServices.AddLog(builder.Services, builder.Configuration, builder.Host);
+//AddDependencyInjectionServices.AddSwaggerConfig(builder.Services);
+//AddDependencyInjectionServices.AddHandlers(builder.Services, builder.Configuration);
+//AddDependencyInjectionServices.AddDomainServices(builder.Services, builder.Configuration);
+//AddDependencyInjectionServices.AddApplicationServices(builder.Services, builder.Configuration);
+AddDependencyInjectionServices.AddEfContexts(builder.Services, builder.Configuration);
 
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -18,7 +25,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 

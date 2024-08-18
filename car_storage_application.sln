@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car.Storage.Application.Int
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car.Storage.Application.Unit.Tests", "Car.Storage.Application.Unit.Tests\Car.Storage.Application.Unit.Tests.csproj", "{6F842727-C56B-49CA-8C82-757E1446B785}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car.Storage.Application.Administrators.IoC", "src\Car.Storage.Application.Administrators.IoC\Car.Storage.Application.Administrators.IoC.csproj", "{C9C4D5BC-2681-48F9-8466-91123EB9BA06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{6F842727-C56B-49CA-8C82-757E1446B785}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F842727-C56B-49CA-8C82-757E1446B785}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F842727-C56B-49CA-8C82-757E1446B785}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9C4D5BC-2681-48F9-8466-91123EB9BA06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9C4D5BC-2681-48F9-8466-91123EB9BA06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9C4D5BC-2681-48F9-8466-91123EB9BA06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9C4D5BC-2681-48F9-8466-91123EB9BA06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +168,7 @@ Global
 		{8864B0CA-7682-4DED-BF98-FFC2B09ED89D} = {1D8E4647-DCE2-4336-B242-BE96148F03EC}
 		{D955414E-7CA3-4DC5-B8F5-5E0A7725BBA9} = {FDE57E6A-234C-468E-A6FA-F8C911A00872}
 		{6F842727-C56B-49CA-8C82-757E1446B785} = {FDE57E6A-234C-468E-A6FA-F8C911A00872}
+		{C9C4D5BC-2681-48F9-8466-91123EB9BA06} = {4EE4273B-FFA0-4EDC-847F-C708924F51C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {90DFE7D7-97A3-4F0B-898B-7472EE304A11}
