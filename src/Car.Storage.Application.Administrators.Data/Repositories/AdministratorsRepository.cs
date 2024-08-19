@@ -79,7 +79,6 @@ namespace Car.Storage.Application.Administrators.Data.Repositories
             {
                 throw ex;
             }
-
         }
     }
 }

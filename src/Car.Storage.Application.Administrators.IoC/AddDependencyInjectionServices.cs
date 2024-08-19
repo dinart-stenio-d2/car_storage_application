@@ -1,4 +1,9 @@
-﻿using Car.Storage.Application.Administrators.Data.Repositories;
+﻿using AutoMapper;
+using Car.Storage.Application.Administrators.Application.AutomapperMappings;
+using Car.Storage.Application.Administrators.Application.Services;
+using Car.Storage.Application.Administrators.Application.Services.Interfaces;
+using Car.Storage.Application.Administrators.Data.AutomapperMappings;
+using Car.Storage.Application.Administrators.Data.Repositories;
 using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
 using Car.Storage.Application.Administrators.Domain.Interfaces.Repositories;
 using Car.Storage.Application.Administrators.IoC.swaggerconfigurations;
@@ -190,7 +195,27 @@ namespace Car.Storage.Application.Administrators.IoC
             host.UseSerilog();
         }
 
+        /// <summary>
+        /// Extension method to configure all automapper mapping profiles
+        /// PS: Autommaper profiles are being used to apply DD anti-corruption layer concept
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddAutoMapperMappings(this IServiceCollection services)
+        {
 
+            var mappings = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperCarViewModelsProfiles());
+                cfg.AddProfile(new AutoMapperCarToDbEntitiesProfiles());
+            });
+
+            mappings.AssertConfigurationIsValid();
+            mappings.CreateMapper();
+
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddSingleton(mappings);
+        }
         /// <summary>
         /// Extension method to add repositories contexts that use EF core
         /// </summary>
@@ -204,14 +229,14 @@ namespace Car.Storage.Application.Administrators.IoC
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
        
+
         /// <summary>
         /// Extension Method used to register all application services
         /// </summary>
         /// <param name="services"></param>
         public static void AddApplicationServices(this IServiceCollection services)
         {
-            //Add all application services here
-            //services.AddScoped<XXX, XXX>();
+            services.AddScoped<IAdministratorsApplicationService, AdministratorsApplicationService>();
         }
 
         /// <summary>
