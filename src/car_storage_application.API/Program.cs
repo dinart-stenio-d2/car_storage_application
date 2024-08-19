@@ -7,6 +7,7 @@ AddDependencyInjectionServices.AddConfigurationFiles(builder.Configuration, buil
 AddDependencyInjectionServices.AddConfigurationsVariables(builder.Services, builder.Configuration);
 AddDependencyInjectionServices.AddGeneralMidllewares(builder.Services);
 AddDependencyInjectionServices.AddApiConfig(builder.Services);
+AddDependencyInjectionServices.AddLog(builder.Services, builder.Configuration, builder.Host);
 AddDependencyInjectionServices.AddSwaggerConfig(builder.Services);
 AddDependencyInjectionServices.AddEfContexts(builder.Services, builder.Configuration);
 
