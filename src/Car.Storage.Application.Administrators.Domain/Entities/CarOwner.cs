@@ -1,4 +1,5 @@
-﻿using Car.Storage.Application.Administrators.Domain.ValueObjects;
+﻿using Car.Storage.Application.Administrators.Domain.FluentValidators;
+using Car.Storage.Application.Administrators.Domain.ValueObjects;
 using Car.Storage.Application.SharedKernel.DomainObjects;
 
 namespace Car.Storage.Application.Administrators.Domain.Entities
@@ -40,9 +41,21 @@ namespace Car.Storage.Application.Administrators.Domain.Entities
             }
         }
         #endregion Private Methods
+
+        #region  Public Methods
+
+        public void ValidateCarOwner(CarOwner carOwner)
+        {
+            Task.Run(() => this.ValidateAsync(carOwner, new CarOwnerValidation())).Wait();
+        }
+
+
         public void DisplayOwnerInfo()
         {
 
         }
+
+        #endregion Public Methods
+
     }
 }
