@@ -1,4 +1,5 @@
-﻿using Car.Storage.Application.SharedKernel.DomainObjects;
+﻿using Car.Storage.Application.Administrators.Domain.FluentValidators;
+using Car.Storage.Application.SharedKernel.DomainObjects;
 
 namespace Car.Storage.Application.Administrators.Domain.Entities
 {
@@ -32,6 +33,7 @@ namespace Car.Storage.Application.Administrators.Domain.Entities
             VehicleIdentificationNumber = vehicleIdentificationNumber;  
             CarPlate = carPlate;
             this.CreateCarOwner(carOwner);
+            Task.Run(() => this.ValidateAsync(this, new CarValidation())).Wait();
         }
 
         #region  Private Methods

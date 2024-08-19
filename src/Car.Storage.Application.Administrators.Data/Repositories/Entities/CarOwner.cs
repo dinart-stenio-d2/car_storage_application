@@ -8,10 +8,10 @@
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-        public string DocumentNumber { get; }
-        public string DocumentType { get; }
-        public string DocumentExpiryDate { get; }
-        public string DocumentIssuingAuthority { get; }
-        public string DocumentDateOfCreation { get; }
+        public string DocumentNumber { get; set; }
+        public string DocumentType { get; set; }
+        public DateTime DocumentExpiryDate { get; set; }
+        public string DocumentIssuingAuthority { get; set; }
+        public DateTime DocumentDateOfCreation { get; set; }
     }
 }
