@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.IO.Compression;
 using System.Reflection;
@@ -54,7 +55,6 @@ namespace Car.Storage.Application.Administrators.IoC
             // Add services to the container.
             services.AddControllers();
             services.AddMvcCore().AddApiExplorer();
-            services.AddLogging();
         }
 
         /// <summary>
@@ -171,6 +171,29 @@ namespace Car.Storage.Application.Administrators.IoC
             #endregion API compression responses settings
         }
 
+        /// <summary>
+        /// Extension method used to configure Serilog
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="host"></param>
+        public static void AddLog(this IServiceCollection services, IConfiguration configuration, IHostBuilder host)
+        {
+            services.AddLogging(builder => builder.AddSerilog());
+
+            var loggerConfiguration = new LoggerConfiguration()
+           .ReadFrom.Configuration(configuration)
+           .CreateLogger();
+
+            host.UseSerilog();
+        }
+
+
+        /// <summary>
+        /// Extension method to add repositories contexts that use EF core
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
         public static void AddEfContexts(this IServiceCollection services, IConfiguration configuration)
         {
             var test = configuration.GetConnectionString("DefaultConnection");
@@ -199,28 +222,15 @@ namespace Car.Storage.Application.Administrators.IoC
                 app.UseHsts();
             }
 
-            //app.UseSerilogRequestLogging();
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
             //Use this feature only if we need to control authorization and authentication
             //app.UseAuthentication();
             //app.UseAuthorization();
-            #region Applying API compression responses settings
-
             app.UseResponseCompression();
-
-            //app.Use(async (context, next) =>
-            //{
-            //    context.Request.EnableBuffering();
-            //    await next();
-            //});
-
-            #endregion Applying API compression responses settings
-
             app.UseStaticFiles();
             app.MapControllers();
-            //app.UseHealthChecksUI();
-            //app.UseHealthChecksUI(options => { options.UIPath = "/report"; });
             app.Run();
         }
     }
