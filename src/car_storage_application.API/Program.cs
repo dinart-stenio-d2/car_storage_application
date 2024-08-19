@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 AddDependencyInjectionServices.AddConfigurationFiles(builder.Configuration, builder.Environment);
 AddDependencyInjectionServices.AddConfigurationsVariables(builder.Services, builder.Configuration);
 AddDependencyInjectionServices.AddGeneralMidllewares(builder.Services);
+AddDependencyInjectionServices.AddAutoMapperMappings(builder.Services);
 AddDependencyInjectionServices.AddApiConfig(builder.Services);
 AddDependencyInjectionServices.AddLog(builder.Services, builder.Configuration, builder.Host);
 AddDependencyInjectionServices.AddSwaggerConfig(builder.Services);

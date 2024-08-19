@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Car.Storage.Application.Administrators.Data\Car.Storage.Application.Administrators.Data.csproj" />
+    <ProjectReference Include="..\Car.Storage.Application.Administrators.Domain\Car.Storage.Application.Administrators.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
