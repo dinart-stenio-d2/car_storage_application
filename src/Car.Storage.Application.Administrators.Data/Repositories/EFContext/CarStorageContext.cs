@@ -8,6 +8,10 @@ namespace Car.Storage.Application.Administrators.Data.Repositories.EFContext
         public DbSet<Entities.Car> Cars { get; set; }
         public DbSet<CarOwner> CarOwners { get; set; }
 
+        public CarStorageContext(DbContextOptions<CarStorageContext> options)
+        : base(options)
+        {
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Entities.Car>(entity =>
