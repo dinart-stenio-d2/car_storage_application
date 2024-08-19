@@ -30,4 +30,8 @@
 	  <Folder Include="AutomapperMappings\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Car.Storage.Application.Administrators.Domain\Car.Storage.Application.Administrators.Domain.csproj" />
+	</ItemGroup>
+
 </Project>

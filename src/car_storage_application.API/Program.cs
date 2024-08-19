@@ -10,6 +10,8 @@ AddDependencyInjectionServices.AddApiConfig(builder.Services);
 AddDependencyInjectionServices.AddLog(builder.Services, builder.Configuration, builder.Host);
 AddDependencyInjectionServices.AddSwaggerConfig(builder.Services);
 AddDependencyInjectionServices.AddEfContexts(builder.Services, builder.Configuration);
+AddDependencyInjectionServices.AddRepositories(builder.Services);
+AddDependencyInjectionServices.AddApplicationServices(builder.Services);
 
 var app = builder.Build();
 

@@ -1,4 +1,6 @@
-﻿using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
+﻿using Car.Storage.Application.Administrators.Data.Repositories;
+using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
+using Car.Storage.Application.Administrators.Domain.Interfaces.Repositories;
 using Car.Storage.Application.Administrators.IoC.swaggerconfigurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -201,7 +203,26 @@ namespace Car.Storage.Application.Administrators.IoC
             services.AddDbContext<CarStorageContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
+       
+        /// <summary>
+        /// Extension Method used to register all application services
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddApplicationServices(this IServiceCollection services)
+        {
+            //Add all application services here
+            //services.AddScoped<XXX, XXX>();
+        }
 
+        /// <summary>
+        /// Extension Method used to register all Repositories
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            //Add all application Repositories here
+            services.AddScoped(typeof(IRepository<>), typeof(AdministratorsRepository<>));
+        }
 
         /// <summary>
         /// Extension method configure Asp.Net Host and services
