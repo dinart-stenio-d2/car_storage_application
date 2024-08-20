@@ -25,34 +25,82 @@ namespace Car.Storage.Application.Administrators.Application.Services
         {
             this.logger.LogInformation($"AdministratorsApplicationService : Try to create car resource Started at -- {DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
             var resultViewModel = new CarViewModel();
-            
-            var newCar = this.mapper.Map<Domain.Entities.Car>(carViewModel);
 
-            if (!newCar.ValidationResult.IsValid)
+            try
             {
-                resultViewModel.GenrateInvalidateViewModelResult(newCar.ValidationResult, string.Empty);
-                this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to create car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
-                return resultViewModel;
-            }
-            else
-            {
-                var newEntity = this.mapper.Map<Data.Repositories.Entities.Car>(newCar);
+                var newCarTobeValidate = this.mapper.Map<Domain.Entities.Car>(carViewModel);
 
-                var dbResult  = await this.carRepository
-                                        .CreateAsync(newEntity)
-                                        .ConfigureAwait(false);
-                if (dbResult != 1)
+                var newCarTobeValidateOwner = this.mapper.Map<Domain.Entities.CarOwner>(carViewModel.Owner);
+
+                newCarTobeValidate.CreateCarOwner(newCarTobeValidateOwner);
+                newCarTobeValidate.Owner.ValidateCarOwner(null);
+
+                var newCarTobeValidateOwnerDocumentIdentity = this.mapper.Map<Domain.ValueObjects.IdentityDocument>(carViewModel.Owner.IdentityDocument);
+
+                newCarTobeValidate.Owner.CreateIdentityDocument(newCarTobeValidateOwnerDocumentIdentity);
+                newCarTobeValidate.Owner.IdentityDocument.ValidateIdentityDocument(null);
+
+
+
+                if (!newCarTobeValidate.Owner.CarOwnerIsValid(newCarTobeValidate.Owner))
                 {
-                    resultViewModel.GenrateInvalidateViewModelResult(null, "Error in an attempt to create car resource on the database");
+                    resultViewModel.GenrateInvalidateViewModelResult(newCarTobeValidate.Owner.ValidationResult, string.Empty);
                     this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to create car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                    return resultViewModel;
                 }
 
-                resultViewModel.GenerateValidViewModel();
+               
 
-                this.logger.LogInformation($"ReasonsApplicationService : Car resource successfully created Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")}");
+                if (!newCarTobeValidate.Owner.IdentityDocumentIsValid(newCarTobeValidate.Owner.IdentityDocument))
+                {
+                    resultViewModel.GenrateInvalidateViewModelResult(newCarTobeValidate.Owner.IdentityDocument.ValidationResult, string.Empty);
+                    this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to create car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                    return resultViewModel;
+                }
 
-                return resultViewModel;
+                var newCarTobeCreated = new Domain.Entities.Car(newCarTobeValidate.Brand,
+                                                                newCarTobeValidate.Model,
+                                                                newCarTobeValidate.Year,
+                                                                newCarTobeValidate.Color,
+                                                                newCarTobeValidate.IsRunning,
+                                                                newCarTobeValidate.IsForSale,
+                                                                newCarTobeValidate.IsNew,
+                                                                newCarTobeValidate.Price,
+                                                                newCarTobeValidate.VehicleIdentificationNumber,
+                                                                newCarTobeValidate.CarPlate,
+                                                                newCarTobeValidate.Owner);
+
+                if (!newCarTobeCreated.ValidationResult.IsValid)
+                {
+                    resultViewModel.GenrateInvalidateViewModelResult(newCarTobeCreated.ValidationResult, string.Empty);
+                    this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to create car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                    return resultViewModel;
+                }
+                else
+                {
+                    var newEntity = this.mapper.Map<Data.Repositories.Entities.Car>(newCarTobeCreated);
+
+                    var dbResult = await this.carRepository
+                                             .CreateAsync(newEntity)
+                                             .ConfigureAwait(false);
+                    if (dbResult != 2)
+                    {
+                        resultViewModel.GenrateInvalidateViewModelResult(null, "Error in an attempt to create car resource on the database");
+                        this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to create car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                    }
+
+                    resultViewModel = (CarViewModel)resultViewModel.GenerateValidViewModel(resultViewModel);
+
+                    this.logger.LogInformation($"AdministratorsApplicationService : Car resource successfully created Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")}");
+                    
+                    return resultViewModel;
+                }
             }
+            catch (Exception ex )
+            {
+                throw;
+            }
+            
         }
 
         public async Task<CarViewModel> UpdateResourceAsync(CarViewModel carViewModel)
@@ -83,7 +131,7 @@ namespace Car.Storage.Application.Administrators.Application.Services
                     this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to update car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
                 }
 
-                resultViewModel.GenerateValidViewModel();
+                resultViewModel = (CarViewModel)resultViewModel.GenerateValidViewModel(resultViewModel);
 
                 this.logger.LogInformation($"AdministratorsApplicationService : Car resource successfully updated Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")}");
 

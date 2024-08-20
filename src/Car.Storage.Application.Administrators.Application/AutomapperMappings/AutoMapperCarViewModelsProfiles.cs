@@ -13,6 +13,8 @@ namespace Car.Storage.Application.Administrators.Application.AutomapperMappings
 
         private void CarViewModelMappings()
         {
+            CreateMap<Domain.ValueObjects.IdentityDocument, IdentityDocumentViewModel>().ReverseMap();
+            CreateMap<Domain.Entities.CarOwner, CarOwnerViewModel>().ReverseMap();  
             CreateMap<Domain.Entities.Car, CarViewModel>()
             .ForMember(dest => dest.ValidationResult, opt => opt.MapFrom(src => src.ValidationResult)).ReverseMap();
   

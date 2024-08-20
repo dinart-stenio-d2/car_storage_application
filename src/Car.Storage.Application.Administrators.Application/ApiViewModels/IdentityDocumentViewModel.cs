@@ -2,10 +2,10 @@
 {
     public class IdentityDocumentViewModel
     {
-        public string DocumentNumber { get; }
-        public string DocumentType { get; }
-        public DateTime DocumentExpiryDate { get; }
-        public string DocumentIssuingAuthority { get; }
-        public DateTime DocumentDateOfCreation { get; }
+        public string DocumentNumber { get; set; }
+        public string DocumentType { get; set; }
+        public DateTime DocumentExpiryDate { get; set; }
+        public string DocumentIssuingAuthority { get; set; }
+        public DateTime DocumentDateOfCreation { get; set; }
     }
 }
