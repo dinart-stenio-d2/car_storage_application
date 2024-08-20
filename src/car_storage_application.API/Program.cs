@@ -1,10 +1,12 @@
 using Car.Storage.Application.Administrators.IoC;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Identity.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
 AddDependencyInjectionServices.AddConfigurationFiles(builder.Configuration, builder.Environment);
 AddDependencyInjectionServices.AddConfigurationsVariables(builder.Services, builder.Configuration);
+AddDependencyInjectionServices.AddAuthenticationAndAuthorization(builder.Services, builder.Configuration);
 AddDependencyInjectionServices.AddGeneralMidllewares(builder.Services);
 AddDependencyInjectionServices.AddAutoMapperMappings(builder.Services);
 AddDependencyInjectionServices.AddApiConfig(builder.Services);

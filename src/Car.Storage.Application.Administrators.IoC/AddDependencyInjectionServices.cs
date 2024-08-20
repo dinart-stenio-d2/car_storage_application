@@ -22,6 +22,8 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.IO.Compression;
 using System.Reflection;
+using Microsoft.Identity.Web;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Car.Storage.Application.Administrators.IoC
 {
@@ -52,6 +54,21 @@ namespace Car.Storage.Application.Administrators.IoC
            .AddJsonFile($"appsettings.{Environment.EnvironmentName}.json", true, true)
            .AddEnvironmentVariables();
         }
+
+
+        public static void AddAuthenticationAndAuthorization(this IServiceCollection services , IConfiguration configuration)
+        {
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAdB2C"));
+            
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireRole", policy => policy.RequireRole("Admins", "Sellers", "Clients"));
+                options.AddPolicy("ReadPolicy", policy => policy.RequireClaim("scp", "api.read"));
+            });
+        }
+
 
         /// <summary>
         /// Extension method to add all the general configurations that AspNet needs to work
@@ -271,9 +288,8 @@ namespace Car.Storage.Application.Administrators.IoC
             app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
-            //Use this feature only if we need to control authorization and authentication
-            //app.UseAuthentication();
-            //app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseResponseCompression();
             app.UseStaticFiles();
             app.MapControllers();
