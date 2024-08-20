@@ -16,9 +16,30 @@ namespace Car.Storage.Application.Administrators.Domain.Entities
         public decimal Price { get; set; }
         public string VehicleIdentificationNumber { get; set; }
         public string? CarPlate { get; set; }
-        public CarOwner? Owner { get; set; } 
+        public CarOwner? Owner { get; set; }
 
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
+        public Car()
+        {
+            Task.Run(() => this.ValidateAsync(this, new CarValidation())).Wait();
+        }
 
+        /// <summary>
+        /// Create a instance of car 
+        /// </summary>
+        /// <param name="brand"></param>
+        /// <param name="model"></param>
+        /// <param name="year"></param>
+        /// <param name="color"></param>
+        /// <param name="isRunning"></param>
+        /// <param name="isForSale"></param>
+        /// <param name="isNew"></param>
+        /// <param name="price"></param>
+        /// <param name="vehicleIdentificationNumber"></param>
+        /// <param name="carPlate"></param>
+        /// <param name="carOwner"></param>
         public Car(string brand, string model, int year, string color, bool isRunning, bool isForSale, bool isNew, decimal price,
         string vehicleIdentificationNumber,string carPlate ,CarOwner carOwner)
         {
@@ -36,21 +57,56 @@ namespace Car.Storage.Application.Administrators.Domain.Entities
             Task.Run(() => this.ValidateAsync(this, new CarValidation())).Wait();
         }
 
+        /// <summary>
+        ///  Update  a instance of car 
+        /// </summary>
+        /// <param name="idParam"></param>
+        /// <param name="brand"></param>
+        /// <param name="model"></param>
+        /// <param name="year"></param>
+        /// <param name="color"></param>
+        /// <param name="isRunning"></param>
+        /// <param name="isForSale"></param>
+        /// <param name="isNew"></param>
+        /// <param name="price"></param>
+        /// <param name="vehicleIdentificationNumber"></param>
+        /// <param name="carPlate"></param>
+        /// <param name="carOwner"></param>
+        public Car(string idParam ,string brand, string model, int year, string color, bool isRunning, bool isForSale, bool isNew, decimal price,
+        string vehicleIdentificationNumber, string carPlate, CarOwner carOwner)
+        {
+            
+            Brand = brand;
+            Model = model;
+            Year = year;
+            Color = color;
+            IsRunning = isRunning;
+            IsForSale = isForSale;
+            IsNew  = isNew;
+            Price = price;
+            VehicleIdentificationNumber = vehicleIdentificationNumber;
+            CarPlate = carPlate;
+            this.CreateCarOwner(carOwner);
+            Task.Run(() => this.ValidateAsync(this, new CarValidation())).Wait();
+        }
+
+
+
         #region  Private Methods
-        private void CreateCarOwner(CarOwner carOwner)
+
+        #endregion Private Methods
+
+        public void CreateCarOwner(CarOwner carOwner)
         {
             if (carOwner == null)
             {
                 this.Owner = new CarOwner();
             }
-            else 
+            else
             {
-                this.Owner = new CarOwner(carOwner.FirstName, carOwner.LastName,carOwner.Address,carOwner.PhoneNumber,carOwner.Email, carOwner.IdentityDocument);   
-            }        
+                this.Owner = new CarOwner(carOwner.FirstName, carOwner.LastName, carOwner.Address, carOwner.PhoneNumber, carOwner.Email,carOwner.IdentityDocument);
+            }
         }
-        #endregion Private Methods
-
-
         public void DisplayCarInfo()
         {
 

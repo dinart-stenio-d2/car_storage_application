@@ -24,10 +24,15 @@ namespace Car.Storage.Application.Administrators.Application.BaseViewModel
             }
         }
 
-        public ValidationResult GenerateValidViewModel()
+        public BaseViewModel GenerateValidViewModel(BaseViewModel baseViewModel)
         {
+         
             var validator = new AlwaysValidValidator<BaseViewModel>();
-            return validator.Validate(this);
+            var viewModelValidationSucess = validator.Validate(baseViewModel);
+
+            baseViewModel.ValidationResult = viewModelValidationSucess;
+
+            return baseViewModel;
         }
        
     }

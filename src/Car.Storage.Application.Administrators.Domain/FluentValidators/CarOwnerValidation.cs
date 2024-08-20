@@ -18,8 +18,8 @@ namespace Car.Storage.Application.Administrators.Domain.FluentValidators
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("Email is not a valid email address.");
 
-            RuleFor(x => x.IdentityDocument)
-           .SetValidator(new IdentityDocumentValidation());
+           // RuleFor(x => x.IdentityDocument)
+           //.SetValidator(new IdentityDocumentValidation());
         }
 
         protected override bool PreValidate(ValidationContext<Entities.CarOwner> context, ValidationResult result)

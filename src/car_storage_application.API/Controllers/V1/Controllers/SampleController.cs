@@ -13,7 +13,7 @@ namespace car_storage_application.API.Controllers.V1.Controllers
     {
         // GET: api/<SampleController>
         [HttpGet]
-        [Authorize(Policy = "ReadPolicy")]
+        [Authorize(Policy = "Admins")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };

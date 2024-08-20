@@ -28,11 +28,15 @@ namespace Car.Storage.Application.Administrators.Domain.Entities
         }
 
         #region  Private Methods
-        private void CreateIdentityDocument(IdentityDocument identityDocument)
+
+        #endregion Private Methods
+
+        #region  Public Methods
+        public void CreateIdentityDocument(IdentityDocument identityDocument)
         {
             if (identityDocument == null)
             {
-                this.IdentityDocument = new  IdentityDocument();
+                this.IdentityDocument = new IdentityDocument();
             }
             else
             {
@@ -40,20 +44,42 @@ namespace Car.Storage.Application.Administrators.Domain.Entities
                 this.IdentityDocument = identityDocument;
             }
         }
-        #endregion Private Methods
-
-        #region  Public Methods
 
         public void ValidateCarOwner(CarOwner carOwner)
         {
-            Task.Run(() => this.ValidateAsync(carOwner, new CarOwnerValidation())).Wait();
+            if (carOwner == null)
+            {
+                Task.Run(() => this.ValidateAsync(this, new CarOwnerValidation())).Wait();
+            }
+            else 
+            {
+                Task.Run(() => this.ValidateAsync(carOwner, new CarOwnerValidation())).Wait();
+            }
+            
         }
 
-
-        public void DisplayOwnerInfo()
+        public bool CarOwnerIsValid(CarOwner carOwner)
         {
+          bool isValid = false; 
 
+            if (carOwner.ValidationResult.IsValid) 
+            {
+                isValid = true;
+            }
+
+            return isValid; 
         }
+        public bool IdentityDocumentIsValid(IdentityDocument identityDocument)
+        {
+            bool isValid = false;
+
+            if (identityDocument.ValidationResult.IsValid)
+            {
+                isValid = true;
+            }
+            return isValid;
+        }
+
 
         #endregion Public Methods
 

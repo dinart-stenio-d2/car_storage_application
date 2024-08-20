@@ -7,6 +7,7 @@ using Car.Storage.Application.Administrators.Data.Repositories;
 using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
 using Car.Storage.Application.Administrators.Domain.Interfaces.Repositories;
 using Car.Storage.Application.Administrators.IoC.swaggerconfigurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.IO.Compression;
 using System.Reflection;
-using Microsoft.Identity.Web;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Car.Storage.Application.Administrators.IoC
 {

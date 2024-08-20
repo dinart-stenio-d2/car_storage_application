@@ -1,5 +1,6 @@
 ﻿using Car.Storage.Application.Administrators.Application.ApiViewModels;
 using Car.Storage.Application.Administrators.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace car_storage_application.API.Controllers.V1.Controllers
@@ -24,23 +25,29 @@ namespace car_storage_application.API.Controllers.V1.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPost("{model}")]
+        [HttpPost]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CarViewModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
+        //[Authorize(Policy = "Admins")]
         public async Task<IActionResult> Post([FromBody] CarViewModel model)
         {
             try
             {
                 this.logger.LogInformation("car_storage_application.API--> Call started for Api : api/Administrators ,Started at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
+                if(model == null)
+                {
+                    this.logger.LogError($"car_storage_application.API--> Call ended for Api : api/Administrators , Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    return BadRequest("Values ​​sent are not valid or the request body is empty");
+                }
                 var result = await administratorsApplicationService.CreateResourceAsync(model);
 
                 if (!result.ValidationResult.IsValid)
                 {
-                    this.logger.LogInformation($"car_storage_application.API--> Call ended for Api : api/Administrators , Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    this.logger.LogError($"car_storage_application.API--> Call ended for Api : api/Administrators , Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
                     return BadRequest(result.ValidationResult.Errors);
                 }
                 else
@@ -61,12 +68,13 @@ namespace car_storage_application.API.Controllers.V1.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpPut("{model}")]
+        [HttpPut]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(CarViewModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
+        //[Authorize(Policy = "Admins")]
         public async Task<IActionResult> Put([FromBody] CarViewModel model)
         {
             try
