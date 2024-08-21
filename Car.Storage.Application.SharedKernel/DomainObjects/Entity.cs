@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Car.Storage.Application.SharedKernel.DomainObjects
 {
@@ -10,7 +11,7 @@ namespace Car.Storage.Application.SharedKernel.DomainObjects
 
         public ValidationResult ValidationResult { get; set; }
 
-        protected Entity(string idParam = null)
+        protected Entity([Optional] string idParam)
         {
             if (string.IsNullOrEmpty(idParam))
             {
