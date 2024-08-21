@@ -55,6 +55,25 @@ namespace Car.Storage.Application.Administrators.Data.Repositories
             }
 
         }
+        public async Task<T> FindFirstOrDefaultByIdWithEntitiesRelatedAsync(Expression<Func<T, bool>> predicate,params Expression<Func<T, object>>[] includeProperties)
+        {
+            try
+            {
+                IQueryable<T> query = dbSet;
+
+                foreach (var includeProperty in includeProperties)
+                {
+                    query = query.Include(includeProperty);
+                }
+
+                return await query.FirstOrDefaultAsync(predicate);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             try

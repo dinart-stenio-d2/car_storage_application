@@ -3,9 +3,9 @@ using FluentValidation.Results;
 
 namespace Car.Storage.Application.Administrators.Domain.FluentValidators
 {
-    public class CarValidation : AbstractValidator<Entities.Car>
+    public class CreationOfCarValidation : AbstractValidator<Entities.Car>
     {
-        public CarValidation()
+        public CreationOfCarValidation()
         {
             RuleFor(c => c.Id).NotEmpty().WithMessage("The Id is a required value.");
             RuleFor(x => x.Brand).NotEmpty().WithMessage("The Brand is a required value.").Length(1, 50).WithMessage("The Brand field must be between 1 and 50 characters.");
