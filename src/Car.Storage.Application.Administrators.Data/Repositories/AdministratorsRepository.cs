@@ -1,4 +1,5 @@
 ﻿using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
+using Car.Storage.Application.Administrators.Domain.Common;
 using Car.Storage.Application.Administrators.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -79,6 +80,23 @@ namespace Car.Storage.Application.Administrators.Data.Repositories
             try
             {
                 return await dbSet.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<PaginatedList<T>> GetAllAsync(int pageNumber, int pageSize)
+        {
+            try
+            {
+                var query = dbSet.AsQueryable();
+
+                var count = await query.CountAsync();
+                var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                return new PaginatedList<T>(items, count, pageNumber, pageSize);
             }
             catch (Exception ex)
             {

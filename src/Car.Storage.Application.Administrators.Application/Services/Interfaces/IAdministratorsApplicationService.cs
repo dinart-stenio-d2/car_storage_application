@@ -10,5 +10,8 @@ namespace Car.Storage.Application.Administrators.Application.Services.Interfaces
 
         public Task<CarViewModel> GetResourceAsyncById(Guid Id);
 
+        public Task<List<CarViewModel>> GetAllResourceAsync();
+        public Task<List<CarViewModel>> GetAllResourceAsync(int pageNumber, int pageSize);
+        public Task<bool> DeleteAsync(Guid Id);
     }
 }

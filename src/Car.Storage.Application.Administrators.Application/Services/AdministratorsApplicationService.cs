@@ -3,7 +3,9 @@ using Car.Storage.Application.Administrators.Application.ApiViewModels;
 using Car.Storage.Application.Administrators.Application.Services.Interfaces;
 using Car.Storage.Application.Administrators.Domain.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
+using NuGet.Packaging;
 using System;
+using System.Drawing.Printing;
 
 namespace Car.Storage.Application.Administrators.Application.Services
 {
@@ -108,6 +110,12 @@ namespace Car.Storage.Application.Administrators.Application.Services
             
         }
 
+   
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public async Task<CarViewModel> GetResourceAsyncById(Guid Id)
         {
             this.logger.LogInformation($"AdministratorsApplicationService : Try to get car resource Started at -- {DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
@@ -144,6 +152,72 @@ namespace Car.Storage.Application.Administrators.Application.Services
                 throw;
             }
             
+        }
+
+        /// <summary>
+        /// Recover all car instances from the database
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<CarViewModel>> GetAllResourceAsync()
+        {
+            this.logger.LogInformation($"AdministratorsApplicationService : Try to get all car resource Started at -- {DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            var resultViewModelList = new List<CarViewModel>();
+            try
+            {
+                var dbResults = await carRepository.GetAllAsync();
+
+                if (dbResults == null || dbResults.Count() == 0)
+                {
+                    this.logger.LogInformation($"AdministratorsApplicationService : There is no data in the database Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} Not Found");
+                }
+                else
+                {
+                    var carEntitiesDomainFounds = mapper.Map<List<Domain.Entities.Car>>(dbResults);
+                   
+                    var carViewModelsFounds = mapper.Map<List<Application.ApiViewModels.CarViewModel>>(carEntitiesDomainFounds);
+
+                    resultViewModelList.AddRange(carViewModelsFounds);
+                    this.logger.LogInformation($"AdministratorsApplicationService : Resouces was found successfully  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                }
+
+                return resultViewModelList;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<CarViewModel>> GetAllResourceAsync(int pageNumber, int pageSize)
+        {
+            this.logger.LogInformation($"AdministratorsApplicationService : Try to get all car resource Started at -- {DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            var resultViewModelList = new List<CarViewModel>();
+            try
+            {
+                var dbResults = await carRepository.GetAllAsync(pageNumber, pageSize);
+
+                if (dbResults == null || dbResults.Count() == 0)
+                {
+                    this.logger.LogInformation($"AdministratorsApplicationService : There is no data in the database Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} Not Found");
+                }
+                else
+                {
+                    var carEntitiesDomainFounds = mapper.Map<List<Domain.Entities.Car>>(dbResults);
+
+                    var carViewModelsFounds = mapper.Map<List<Application.ApiViewModels.CarViewModel>>(carEntitiesDomainFounds);
+
+                    resultViewModelList.AddRange(carViewModelsFounds);
+                    this.logger.LogInformation($"AdministratorsApplicationService : Resouces was found successfully  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                }
+
+                return resultViewModelList;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<CarViewModel> UpdateResourceAsync(CarViewModel carViewModel ,Guid Id)
@@ -224,7 +298,38 @@ namespace Car.Storage.Application.Administrators.Application.Services
             {
                 throw;
             }
-        
+        }
+
+        /// <summary>
+        /// Deletes ScheduledAirings asynchronous.
+        /// </summary>
+        /// <param name="contract">The contract.</param>
+        /// <returns></returns>
+        public async Task<bool> DeleteAsync(Guid Id)
+        {
+            this.logger.LogInformation($"AdministratorsApplicationService : Try to delete car resource Started at -- {DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            var sucess = default(bool);
+            try
+            {
+                var commits = await carRepository.DeleteAsync(p => p.Id == Id);
+
+                if (commits == 1)
+                {
+                   return true;
+                }
+                else 
+                {
+                    this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to dlete car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                    return sucess;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError($"AdministratorsApplicationService : Error in an attempt to dlete car resource  Ended at -- {DateTime.UtcNow.ToString("MM / dd / yyyy hh: mm:ss.fff tt")} ERROR");
+                return (sucess);
+            }
+
+            return true;
         }
     }
 }
