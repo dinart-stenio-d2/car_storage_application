@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace car_storage_application.API.Controllers.V1.Controllers
 {
@@ -12,6 +13,7 @@ namespace car_storage_application.API.Controllers.V1.Controllers
     {
         // GET: api/<SampleController>
         [HttpGet]
+        [Authorize(Policy = "Admins")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };

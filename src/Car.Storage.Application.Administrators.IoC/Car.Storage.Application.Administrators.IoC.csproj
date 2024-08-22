@@ -11,9 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <PackageReference Include="AutoMapper" Version="13.0.1" />
 	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
-	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
@@ -23,10 +23,17 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
 	  <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+	  <PackageReference Include="Microsoft.Identity.Client" Version="4.63.0" />
+	  <PackageReference Include="Microsoft.Identity.Web" Version="3.0.1" />
+	  <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="3.0.1" />
+	  <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+	  <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+	  <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Car.Storage.Application.Administrators.Application\Car.Storage.Application.Administrators.Application.csproj" />
     <ProjectReference Include="..\Car.Storage.Application.Administrators.Data\Car.Storage.Application.Administrators.Data.csproj" />
   </ItemGroup>
 

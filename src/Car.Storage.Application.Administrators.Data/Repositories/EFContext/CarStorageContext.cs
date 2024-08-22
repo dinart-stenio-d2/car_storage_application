@@ -25,8 +25,8 @@ namespace Car.Storage.Application.Administrators.Data.Repositories.EFContext
                 entity.Property(c => c.IsNew).IsRequired();
                 entity.Property(c => c.IsForSale).IsRequired();
                 entity.Property(c => c.Price).IsRequired().HasColumnType("decimal(18,2)");
-                entity.Property(c => c.VehicleIdentificationNumber).IsRequired().HasMaxLength(50);
-                entity.Property(c => c.CarPlate).HasMaxLength(10);
+                entity.Property(c => c.VehicleIdentificationNumber).IsRequired().HasMaxLength(17);
+                entity.Property(c => c.CarPlate).HasMaxLength(7);
 
                 entity.HasOne(c => c.Owner)
                       .WithMany()
@@ -36,11 +36,11 @@ namespace Car.Storage.Application.Administrators.Data.Repositories.EFContext
             modelBuilder.Entity<CarOwner>(entity =>
             {
                 entity.HasKey(o => o.Id).IsClustered(); ;
-                entity.Property(o => o.FirstName).HasMaxLength(50);
-                entity.Property(o => o.LastName).HasMaxLength(50);
-                entity.Property(o => o.Address).HasMaxLength(100);
-                entity.Property(o => o.PhoneNumber).HasMaxLength(20);
-                entity.Property(o => o.Email).HasMaxLength(50);
+                entity.Property(o => o.FirstName).IsRequired().HasMaxLength(50);
+                entity.Property(o => o.LastName).IsRequired().HasMaxLength(50);
+                entity.Property(o => o.Address).IsRequired().HasMaxLength(100);
+                entity.Property(o => o.PhoneNumber).IsRequired().HasMaxLength(20);
+                entity.Property(o => o.Email).IsRequired().HasMaxLength(50);
                 entity.Property(o => o.DocumentNumber).IsRequired().HasMaxLength(20);
                 entity.Property(o => o.DocumentType).IsRequired().HasMaxLength(20);
                 entity.Property(o => o.DocumentExpiryDate).IsRequired().HasMaxLength(10);

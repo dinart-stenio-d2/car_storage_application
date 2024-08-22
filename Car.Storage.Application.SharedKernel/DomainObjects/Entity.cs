@@ -1,10 +1,17 @@
-﻿namespace Car.Storage.Application.SharedKernel.DomainObjects
+﻿using FluentValidation;
+using FluentValidation.Results;
+using System;
+using System.Runtime.InteropServices;
+
+namespace Car.Storage.Application.SharedKernel.DomainObjects
 {
     public abstract class Entity
     {
         public Guid Id { get; set; }
 
-        protected Entity(string idParam = null)
+        public ValidationResult ValidationResult { get; set; }
+
+        protected Entity([Optional] string idParam)
         {
             if (string.IsNullOrEmpty(idParam))
             {
@@ -32,6 +39,18 @@
             if (ReferenceEquals(null, compareTo)) return false;
 
             return Id.Equals(compareTo.Id);
+        }
+
+
+        /// <summary>
+        /// Validate business rules of the instance using fluent validations
+        /// </summary>
+        /// <typeparam name="TModel"></typeparam>
+        /// <param name="model"></param>
+        /// <param name="validator"></param>
+        public async void ValidateAsync<TModel>(TModel model, AbstractValidator<TModel> validator)
+        {
+            ValidationResult = await validator.ValidateAsync(model);
         }
 
     }

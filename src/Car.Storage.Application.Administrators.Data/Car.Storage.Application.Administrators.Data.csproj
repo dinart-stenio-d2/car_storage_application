@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="AutomapperMappings\" />
+	  <ProjectReference Include="..\Car.Storage.Application.Administrators.Domain\Car.Storage.Application.Administrators.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

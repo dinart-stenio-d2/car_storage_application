@@ -1,5 +1,13 @@
-﻿using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
+﻿using AutoMapper;
+using Car.Storage.Application.Administrators.Application.AutomapperMappings;
+using Car.Storage.Application.Administrators.Application.Services;
+using Car.Storage.Application.Administrators.Application.Services.Interfaces;
+using Car.Storage.Application.Administrators.Data.AutomapperMappings;
+using Car.Storage.Application.Administrators.Data.Repositories;
+using Car.Storage.Application.Administrators.Data.Repositories.EFContext;
+using Car.Storage.Application.Administrators.Domain.Interfaces.Repositories;
 using Car.Storage.Application.Administrators.IoC.swaggerconfigurations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +18,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.IO.Compression;
 using System.Reflection;
@@ -45,6 +55,21 @@ namespace Car.Storage.Application.Administrators.IoC
            .AddEnvironmentVariables();
         }
 
+
+        public static void AddAuthenticationAndAuthorization(this IServiceCollection services , IConfiguration configuration)
+        {
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddMicrosoftIdentityWebApi(configuration.GetSection("AzureAdB2C"));
+            
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireRole", policy => policy.RequireRole("Admins", "Sellers", "Clients"));
+                options.AddPolicy("ReadPolicy", policy => policy.RequireClaim("scp", "api.read"));
+            });
+        }
+
+
         /// <summary>
         /// Extension method to add all the general configurations that AspNet needs to work
         /// </summary>
@@ -54,7 +79,6 @@ namespace Car.Storage.Application.Administrators.IoC
             // Add services to the container.
             services.AddControllers();
             services.AddMvcCore().AddApiExplorer();
-            services.AddLogging();
         }
 
         /// <summary>
@@ -171,6 +195,52 @@ namespace Car.Storage.Application.Administrators.IoC
             #endregion API compression responses settings
         }
 
+        /// <summary>
+        /// Extension method used to configure Serilog
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
+        /// <param name="host"></param>
+        public static void AddLog(this IServiceCollection services, IConfiguration configuration, IHostBuilder host)
+        {
+ 
+            var loggerConfiguration = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            Log.Logger = loggerConfiguration;
+
+            services.AddLogging(builder => builder.AddSerilog());
+
+            host.UseSerilog();
+        }
+
+        /// <summary>
+        /// Extension method to configure all automapper mapping profiles
+        /// PS: Autommaper profiles are being used to apply DD anti-corruption layer concept
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddAutoMapperMappings(this IServiceCollection services)
+        {
+
+            var mappings = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new AutoMapperCarViewModelsProfiles());
+                cfg.AddProfile(new AutoMapperCarToDbEntitiesProfiles());
+            });
+
+            mappings.AssertConfigurationIsValid();
+            mappings.CreateMapper();
+
+            
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddSingleton(mappings);
+        }
+        /// <summary>
+        /// Extension method to add repositories contexts that use EF core
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="configuration"></param>
         public static void AddEfContexts(this IServiceCollection services, IConfiguration configuration)
         {
             var test = configuration.GetConnectionString("DefaultConnection");
@@ -178,7 +248,26 @@ namespace Car.Storage.Application.Administrators.IoC
             services.AddDbContext<CarStorageContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         }
+       
 
+        /// <summary>
+        /// Extension Method used to register all application services
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<IAdministratorsApplicationService, AdministratorsApplicationService>();
+        }
+
+        /// <summary>
+        /// Extension Method used to register all Repositories
+        /// </summary>
+        /// <param name="services"></param>
+        public static void AddRepositories(this IServiceCollection services)
+        {
+            //Add all application Repositories here
+            services.AddScoped(typeof(IRepository<>), typeof(AdministratorsRepository<>));
+        }
 
         /// <summary>
         /// Extension method configure Asp.Net Host and services
@@ -199,28 +288,14 @@ namespace Car.Storage.Application.Administrators.IoC
                 app.UseHsts();
             }
 
-            //app.UseSerilogRequestLogging();
+            app.UseSerilogRequestLogging();
             app.UseHttpsRedirection();
             app.UseRouting();
-            //Use this feature only if we need to control authorization and authentication
-            //app.UseAuthentication();
-            //app.UseAuthorization();
-            #region Applying API compression responses settings
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseResponseCompression();
-
-            //app.Use(async (context, next) =>
-            //{
-            //    context.Request.EnableBuffering();
-            //    await next();
-            //});
-
-            #endregion Applying API compression responses settings
-
             app.UseStaticFiles();
             app.MapControllers();
-            //app.UseHealthChecksUI();
-            //app.UseHealthChecksUI(options => { options.UIPath = "/report"; });
             app.Run();
         }
     }

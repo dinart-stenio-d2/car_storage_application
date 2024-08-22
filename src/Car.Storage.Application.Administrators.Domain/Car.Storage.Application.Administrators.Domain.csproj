@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Events\" />
-    <Folder Include="FluentValidators\" />
-    <Folder Include="Interfaces\Repositories\" />
     <Folder Include="ServicesDomain\Interfaces\" />
   </ItemGroup>
 
