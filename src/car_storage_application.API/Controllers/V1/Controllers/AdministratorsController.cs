@@ -1,8 +1,8 @@
 ﻿using Car.Storage.Application.Administrators.Application.ApiViewModels;
 using Car.Storage.Application.Administrators.Application.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using Car.Storage.Application.Administrators.Domain.Common;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using System.Net;
 
 namespace car_storage_application.API.Controllers.V1.Controllers
 {
@@ -131,11 +131,11 @@ namespace car_storage_application.API.Controllers.V1.Controllers
         {
             try
             {
-                this.logger.LogInformation("car_storage_application.API--> Call started for recover a car by the Api : api/Administrators/Details/Id , Started at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+                this.logger.LogInformation("car_storage_application.API--> Call started for recover a car by the Api : api/Administrators/Car/Id , Started at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
                 if (Id  == Guid.Empty)
                 {
-                    this.logger.LogError($"car_storage_application.API--> Call ended for try recover a car by the Api : api/Administrators/Details fail the Id ​​sent it is  not valid, Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    this.logger.LogError($"car_storage_application.API--> Call ended for try recover a car by the Api : api/Administrators/Car fail the Id ​​sent it is  not valid, Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
                     return BadRequest($"the {Id} ​​sent it is  not valid");
                 }
 
@@ -143,7 +143,7 @@ namespace car_storage_application.API.Controllers.V1.Controllers
 
                 if (!result.ValidationResult.IsValid && result.ValidationResult.Errors.Any(error => error.ErrorMessage.Contains($"There is no data in the database for the Id:{Id}")))
                 {
-                    this.logger.LogInformation($"car_storage_application.API-->ended for try recover a car by the Api : api/Administrators/Details/{Id.ToString()} Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    this.logger.LogInformation($"car_storage_application.API-->ended for try recover a car by the Api : api/Administrators/Car/{Id.ToString()} Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
                     return NotFound(result);
                 }
                 else
@@ -158,5 +158,115 @@ namespace car_storage_application.API.Controllers.V1.Controllers
             }
 
         }
-    }
+
+        /// <summary>
+        ///  Endpoint that reccover all existing resource of car without pagging
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Cars/")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<CarViewModel>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
+        //[Authorize(Policy = "Admins")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                this.logger.LogInformation("car_storage_application.API--> Call started for recover a car by the Api : api/Administrators/Cars  , Started at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+
+                var result = await administratorsApplicationService.GetAllResourceAsync();
+
+                if (result.Count() < 0)
+                {
+                    this.logger.LogInformation($"car_storage_application.API-->ended for try recover a car by the Api : api/Administrators/Cars Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    return NotFound(result);
+                }
+                else
+                {
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"car_storage_application.API--> Call ended for Api : api/Administrators/Cars , Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", ERROR");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"ERROR IN: {ex.InnerException}, MESSAGE: {ex.Message}");
+            }
+
+        }
+
+        /// <summary>
+        /// Returns a Paginated List
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Cars/Paginated")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Get))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedList<CarViewModel>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
+        //[Authorize(Policy = "Admins")]
+        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10)
+        {
+            try
+            {
+                this.logger.LogInformation("car_storage_application.API--> Call started for recover a list paginated of car by the Api : api/Administrators/Cars  , Started at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+
+                var result = await administratorsApplicationService.GetAllResourceAsync(pageNumber, pageSize);
+
+                if (!result.Any())
+                {
+                    this.logger.LogInformation($"car_storage_application.API-->ended for try recover a list paginated of car by the Api : api/Administrators/Cars Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    return NotFound(result);
+                }
+                else
+                {
+                    return Ok(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"car_storage_application.API--> Call ended for Api : api/Administrators/Cars , Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", ERROR");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"ERROR IN: {ex.InnerException}, MESSAGE: {ex.Message}");
+            }
+        }
+
+
+        [HttpDelete("{Id:guid}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Delete))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
+        public async Task<IActionResult> Delete([FromRoute] Guid Id)
+        {
+            this.logger.LogInformation("car_storage_application.API--> Call started the delete of  instance of car  by the Api : api/Administrators/Cars  , Started at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+            bool success = default(bool);
+            try
+            {
+                success =  await administratorsApplicationService.DeleteAsync(Id);
+
+                if (!success)
+                {
+                    this.logger.LogError($"car_storage_application.API--> Call ended for try delee a car by the Api : api/Administrators/Car fail the Id ​​sent it is  not valid, Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", Data not found");
+                    return StatusCode(Convert.ToInt32(HttpStatusCode.BadRequest), $"The delete request failed");
+                }
+
+                return this.StatusCode(Convert.ToInt32(HttpStatusCode.NoContent));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"car_storage_application.API--> Call ended for Api : api/Administrators/Cars , Ended at -- " + DateTime.UtcNow.ToString("MM/dd/yyyy hh:mm:ss.fff tt") + ", ERROR");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"ERROR IN: {ex.InnerException}, MESSAGE: {ex.Message}");
+
+            }
+        }
+   }
 }

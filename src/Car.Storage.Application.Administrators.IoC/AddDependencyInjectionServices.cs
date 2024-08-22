@@ -203,11 +203,14 @@ namespace Car.Storage.Application.Administrators.IoC
         /// <param name="host"></param>
         public static void AddLog(this IServiceCollection services, IConfiguration configuration, IHostBuilder host)
         {
-            services.AddLogging(builder => builder.AddSerilog());
-
+ 
             var loggerConfiguration = new LoggerConfiguration()
-           .ReadFrom.Configuration(configuration)
-           .CreateLogger();
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            Log.Logger = loggerConfiguration;
+
+            services.AddLogging(builder => builder.AddSerilog());
 
             host.UseSerilog();
         }
